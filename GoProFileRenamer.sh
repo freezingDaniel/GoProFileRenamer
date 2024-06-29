@@ -9,14 +9,10 @@ YELLOW='\033[1;33m'
 GREY='\033[1;30m'
 NC='\033[0m'
 
-# Loop through all MP4/LRV/THM files in the current directory and subdirectories
-find .  -type f \
-        -name "G???????.MP4" \
-        -name "G???????.LRV" \
-        -name "G???????.THM" \
-        | while read -r file;
+# Loop through all MP4 files in the current directory and subdirectories
+find . -type f \( -name "G???????.MP4" -o -name "G???????.LRV" -o -name "G???????.THM" \) | while read -r file;
 do
-  # Extract the encoding type (H, L or X), file number, and chapter number
+  # Extract the encoding type (H or X), file number, and chapter number
   filename=$(basename "$file")
   encoding_type=$(echo "$filename" | cut -c2)
   chapter_number=$(echo "$filename" | cut -c3-4)
@@ -27,7 +23,7 @@ do
   echo -e $filename:
 
   # Check if 
-  # - the encoding type is H, X or L 
+  # - the encoding type is H or X 
   # - chapter_number is a number
   # - file_number is a number
   if  [[ "$encoding_type" =~ [HXL] ]] && \
@@ -35,7 +31,7 @@ do
       [[ "$file_number" =~ ^[0-9]{4}$ ]]; then
 
     # Construct the new filename
-    new_filename="G-${file_number}-${encoding_type}-${chapter_number}.${file_ending}"
+    new_filename="G-${file_number}-${chapter_number}-${encoding_type}.${file_ending}"
 
     # Get the directory path
     dir_path=$(dirname "$file")
